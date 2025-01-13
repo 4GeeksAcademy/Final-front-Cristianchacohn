@@ -17,16 +17,31 @@ export const Starships = () => {
                     store.starships.map((starship, index) => (
                         <div className="col-md-4" key={index}>
                             <div className="card">
+                                <img
+                                    src={`https://starwars-visualguide.com/assets/img/starships/${starship.uid}.jpg`}
+                                    onError={(event) => {
+                                        event.target.src = 'https://starwars-visualguide.com/assets/img/placeholder.jpg';
+                                    }}
+                                    alt={starship.name}
+                                    className="card-img-top"
+                                    style={{ height: "300px", objectFit: "cover" }}
+                                />
                                 <div className="card-body">
                                     <h5 className="card-title">{starship.name}</h5>
                                     <Link to={`/starships/${starship.uid}`} className="btn btn-primary">
                                         Learn More
                                     </Link>
                                     <button
-                                        className="btn btn-warning ml-2"
-                                        onClick={() => actions.addFavorite(starship)}
+                                        className={`btn ${
+                                            store.favorites.some(fav => fav.uid === starship.uid) ? "btn-danger" : "btn-warning"
+                                        }`}
+                                        onClick={() =>
+                                            store.favorites.some(fav => fav.uid === starship.uid)
+                                                ? actions.removeFavorite(starship.uid)
+                                                : actions.addFavorite(starship)
+                                        }
                                     >
-                                        Add to Favorites
+                                        {store.favorites.some(fav => fav.uid === starship.uid) ? "Unfavorite" : "Add to Favorites"}
                                     </button>
                                 </div>
                             </div>

@@ -23,6 +23,20 @@ export const CharacterDetail = () => {
         <div className="container">
             {character ? (
                 <div>
+                    <div className="text-center">
+                        <img
+                            src={`https://starwars-visualguide.com/assets/img/characters/${id}.jpg`}
+                            onError={(e) => (e.target.src = "/path/to/placeholder.jpg")}
+                            alt={character.properties.name}
+                            className="img-fluid rounded"
+                            style={{
+                                objectFit: "cover",
+                                width: "300px",
+                                height: "300px",
+                                marginBottom: "20px",
+                            }}
+                        />
+                    </div>
                     <h1>{character.properties.name}</h1>
                     <p>Height: {character.properties.height}</p>
                     <p>Mass: {character.properties.mass}</p>

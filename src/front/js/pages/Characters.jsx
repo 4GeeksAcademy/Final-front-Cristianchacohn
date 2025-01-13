@@ -17,6 +17,13 @@ export const Characters = () => {
                     store.characters.map((character, index) => (
                         <div className="col-md-4" key={index}>
                             <div className="card">
+                                <img
+                                    src={`https://starwars-visualguide.com/assets/img/characters/${character.uid}.jpg`}
+                                    onError={(e) => (e.target.src = "/path/to/placeholder.jpg")}
+                                    alt={character.name}
+                                    className="card-img-top"
+                                    style={{ height: "300px", objectFit: "cover" }}
+                                />
                                 <div className="card-body">
                                     <h5 className="card-title">{character.name}</h5>
                                     <Link to={`/characters/${character.uid}`} className="btn btn-primary">

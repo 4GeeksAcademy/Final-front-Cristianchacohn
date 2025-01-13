@@ -11,6 +11,7 @@ import { Starships } from "./pages/Starships.jsx";
 import { StarshipsById } from "./pages/StarshipsById.jsx";
 import { Characters } from "./pages/Characters.jsx";
 import { CharacterDetail } from "./pages/CharacterDetail.jsx";
+import { PlanetDetail } from "./pages/PlanetDetail.jsx";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -22,6 +23,7 @@ const Layout = () => {
                 <Routes>
                     <Route element={<Home />} path="/" />
                     <Route element={<Planets />} path="/planets" />
+                    <Route element={<PlanetDetail />} path="/planet/:id" />                    
                     <Route element={<Starships />} path="/starships" />
                     <Route element={<StarshipsById />} path="/starship/:id" />
                     <Route element={<Characters />} path="/characters" />

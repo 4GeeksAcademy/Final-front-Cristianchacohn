@@ -1,48 +1,68 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { Context } from "../store/appContext"; // Importamos el Context API
 
 export const Navbar = () => {
-    const { store, actions } = useContext(Context); // Obtenemos store y actions del Context API
-
     return (
-        <nav className="navbar navbar-light bg-light">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container">
-                <Link to="/" className="navbar-brand">Star Wars</Link>
-                <div className="ml-auto d-flex align-items-center">
-                    <Link to="/characters" className="btn btn-primary">Characters</Link>
-                    <Link to="/planets" className="btn btn-primary ml-2">Planets</Link>
-                    <Link to="/starships" className="btn btn-primary ml-2">Starships</Link>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
 
-                    {/* Dropdown de favoritos */}
-                    <div className="dropdown ml-3">
+                {/* Links */}
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav me-auto">
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/characters">
+                                Characters
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/planets">
+                                Planets
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/starships">
+                                Starships
+                            </Link>
+                        </li>
+                    </ul>
+
+                    {/* Favorites Dropdown */}
+                    <div className="dropdown">
                         <button
-                            className="btn btn-primary dropdown-toggle"
+                            className="btn btn-warning dropdown-toggle"
                             type="button"
-                            id="dropdownMenuButton"
+                            id="favoritesDropdown"
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
-                            Favorites ({store.favorites.length})
+                            Favorites
                         </button>
-                        <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            {store.favorites.length > 0 ? (
-                                store.favorites.map((item, index) => (
-                                    <li key={index} className="dropdown-item d-flex justify-content-between align-items-center">
-                                        <span>{item.name}</span>
-                                        <button
-                                            className="btn btn-danger btn-sm"
-                                            onClick={() => actions.removeFavorite(item.uid)} // Asegúrate de pasar `uid`
-                                        >
-                                            <i className="fas fa-trash"></i>
-                                        </button>
-                                    </li>
-                                ))
-                            ) : (
-                                <li className="dropdown-item text-muted">No favorites added</li>
-                            )}
+                        <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="favoritesDropdown">
+                            <li>
+                                <Link className="dropdown-item" to="/favorites">
+                                    View All Favorites
+                                </Link>
+                            </li>
+                            <li>
+                                <hr className="dropdown-divider" />
+                            </li>
+                            <li>
+                                <button className="dropdown-item" onClick={() => alert("Functionality Coming Soon!")}>
+                                    Clear Favorites
+                                </button>
+                            </li>
                         </ul>
-
                     </div>
                 </div>
             </div>

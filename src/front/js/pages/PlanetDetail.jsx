@@ -23,6 +23,17 @@ export const PlanetDetail = () => {
         <div className="container">
             {planet ? (
                 <div>
+                    <img
+                        src={`https://starwars-visualguide.com/assets/img/planets/${id}.jpg`}
+                        onError={(e) => (e.target.src = "/path/to/placeholder.jpg")}
+                        alt={planet.properties.name}
+                        className="img-fluid rounded-start"
+                        style={{
+                            objectFit: "cover",
+                            width: "100%",
+                            height: "300px",
+                        }}
+                    />
                     <h1>{planet.properties.name}</h1>
                     <p>Diameter: {planet.properties.diameter}</p>
                     <p>Climate: {planet.properties.climate}</p>

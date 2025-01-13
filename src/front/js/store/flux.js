@@ -8,6 +8,10 @@ const getState = ({ getStore, getActions, setStore }) => {
         },
         actions: {
             // Cargar personajes
+            handleErrorImg: (event) => {
+                event.target.src = 'https://starwars-visualguide.com/assets/img/placeholder.jpg';
+            },
+
             loadCharacters: async () => {
                 try {
                     const response = await fetch("https://www.swapi.tech/api/people/");

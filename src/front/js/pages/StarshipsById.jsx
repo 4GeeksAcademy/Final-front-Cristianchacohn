@@ -1,6 +1,5 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Context } from "../store/appContext";
 
 export const StarshipsById = () => {
     const { id } = useParams();
@@ -24,6 +23,20 @@ export const StarshipsById = () => {
         <div className="container">
             {starship ? (
                 <div>
+                    <img
+                        src={`https://starwars-visualguide.com/assets/img/starships/${id}.jpg`}
+                        onError={(e) => (e.target.src = "/path/to/placeholder.jpg")}
+                        alt={starship.properties.name}
+                        className="img-fluid rounded-start"
+                        style={{
+                            objectFit: "cover",
+                            width: "100%",
+                            height: "100%",
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                        }}
+                    />
                     <h1>{starship.properties.name}</h1>
                     <p>Model: {starship.properties.model}</p>
                     <p>Manufacturer: {starship.properties.manufacturer}</p>
