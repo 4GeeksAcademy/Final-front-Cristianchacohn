@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { Context } from "../store/appContext";
 
 export const Navbar = () => {
+    const { store, actions } = useContext(Context);
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container">
+                <Link className="navbar-brand" to="/">
+                    <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Star_Wars_Logo.svg/1200px-Star_Wars_Logo.svg.png"
+                        alt="Logo"
+                        width="40"
+                        height="40"
+                        className="d-inline-block align-top me-2"
+                    />
+                    Star Wars
+                </Link>
+
                 <button
                     className="navbar-toggler"
                     type="button"
@@ -37,7 +51,6 @@ export const Navbar = () => {
                         </li>
                     </ul>
 
-                    {/* Favorites Dropdown */}
                     <div className="dropdown">
                         <button
                             className="btn btn-warning dropdown-toggle"
@@ -46,22 +59,26 @@ export const Navbar = () => {
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
-                            Favorites
+                            Favorites <span className="badge bg-secondary">{store.favorites.length}</span>
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="favoritesDropdown">
-                            <li>
-                                <Link className="dropdown-item" to="/favorites">
-                                    View All Favorites
-                                </Link>
-                            </li>
-                            <li>
-                                <hr className="dropdown-divider" />
-                            </li>
-                            <li>
-                                <button className="dropdown-item" onClick={() => alert("Functionality Coming Soon!")}>
-                                    Clear Favorites
-                                </button>
-                            </li>
+                            {store.favorites.length > 0 ? (
+                                store.favorites.map((item, index) => (
+                                    <li key={index} className="dropdown-item d-flex justify-content-between align-items-center">
+                                        <Link to={`/${item.type}/${item.uid}`} className="text-decoration-none text-dark">
+                                            {item.name}
+                                        </Link>
+                                        <button
+                                            className="btn btn-sm btn-danger ms-2"
+                                            onClick={() => actions.removeFavorite(item.uid)}
+                                        >
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="dropdown-item text-muted">No favorites added</li>
+                            )}
                         </ul>
                     </div>
                 </div>
