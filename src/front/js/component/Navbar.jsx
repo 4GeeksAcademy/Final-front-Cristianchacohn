@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Navbar = () => {
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate();
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -31,7 +32,6 @@ export const Navbar = () => {
                     <span className="navbar-toggler-icon"></span>
                 </button>
 
-                {/* Links */}
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item">
@@ -64,10 +64,16 @@ export const Navbar = () => {
                         <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="favoritesDropdown">
                             {store.favorites.length > 0 ? (
                                 store.favorites.map((item, index) => (
-                                    <li key={index} className="dropdown-item d-flex justify-content-between align-items-center">
-                                        <Link to={`/${item.type}/${item.uid}`} className="text-decoration-none text-dark">
+                                    <li
+                                        key={index}
+                                        className="dropdown-item d-flex justify-content-between align-items-center"
+                                    >
+                                        <span
+                                            onClick={() => navigate(`/${item.type}/${item.uid}`)}
+                                            style={{ cursor: "pointer", color: "#000", textDecoration: "none" }}
+                                        >
                                             {item.name}
-                                        </Link>
+                                        </span>
                                         <button
                                             className="btn btn-sm btn-danger ms-2"
                                             onClick={() => actions.removeFavorite(item.uid)}

@@ -18,8 +18,10 @@ const injectContext = (PassedComponent) => {
         );
 
         useEffect(() => {
+            // Cargar todos los datos al montar el contexto
             state.actions.loadCharacters();
             state.actions.loadPlanets();
+            state.actions.loadStarships();
         }, []);
 
         return (
