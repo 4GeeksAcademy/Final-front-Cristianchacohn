@@ -32,9 +32,8 @@ export const Planets = () => {
                                         Learn More
                                     </Link>
                                     <button
-                                        className={`btn ${
-                                            store.favorites.some(fav => fav.uid === planet.uid) ? "btn-danger" : "btn-warning"
-                                        }`}
+                                        className={`btn ${store.favorites.some(fav => fav.uid === planet.uid) ? "btn-danger" : "btn-warning"
+                                            }`}
                                         onClick={() =>
                                             store.favorites.some(fav => fav.uid === planet.uid)
                                                 ? actions.removeFavorite(planet.uid)

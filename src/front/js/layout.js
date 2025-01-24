@@ -23,11 +23,11 @@ const Layout = () => {
                 <Routes>
                     <Route element={<Home />} path="/" />
                     <Route element={<Planets />} path="/planets" />
-                    <Route element={<PlanetDetail />} path="/planet/:id" />>                    
+                    <Route element={<PlanetDetail />} path="/planets/:id" />                    
                     <Route element={<Starships />} path="/starships" />
-                    <Route element={<StarshipsById />} path="/starship/:id" />
+                    <Route element={<StarshipsById />} path="/starships/:id" />
                     <Route element={<Characters />} path="/characters" />
-                    <Route element={<CharacterDetail />} path="/character/:id" />
+                    <Route element={<CharacterDetail />} path="/characters/:id" />
                 </Routes>
                 <Footer />
             </BrowserRouter>

@@ -4,29 +4,37 @@ import { useParams } from "react-router-dom";
 export const CharacterDetail = () => {
     const { id } = useParams();
     const [character, setCharacter] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCharacter = async () => {
             try {
                 const response = await fetch(`https://www.swapi.tech/api/people/${id}`);
+                if (!response.ok) throw new Error(`Error: ${response.status} - ${response.statusText}`);
                 const data = await response.json();
                 setCharacter(data.result);
-            } catch (error) {
-                console.error("Error fetching character details:", error);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchCharacter();
     }, [id]);
 
+    if (loading) return <p>Loading character details...</p>;
+    if (error) return <p>Error: {error}</p>;
+
     return (
-        <div className="container">
+        <div className="container d-flex justify-content-center">
             {character ? (
                 <div>
-                    <div className="text-center">
+                    <div className="text-center mt-3">
                         <img
                             src={`https://starwars-visualguide.com/assets/img/characters/${id}.jpg`}
-                            onError={(e) => (e.target.src = "/path/to/placeholder.jpg")}
+                            onError={(e) => (e.target.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg")}
                             alt={character.properties.name}
                             className="img-fluid rounded"
                             style={{
@@ -45,7 +53,7 @@ export const CharacterDetail = () => {
                     <p>Eye Color: {character.properties.eye_color}</p>
                 </div>
             ) : (
-                <p>Loading character details...</p>
+                <p>No details available for this character.</p>
             )}
         </div>
     );

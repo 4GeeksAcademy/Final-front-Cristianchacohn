@@ -19,6 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             loadCharacters: async () => {
                 try {
                     const response = await fetch("https://www.swapi.tech/api/people/");
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     if (data.results) {
                         const transformedCharacters = data.results.map((item) => ({
@@ -31,12 +32,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error loading characters:", error);
                 }
-            },
+            },            
 
             // Cargar planetas
             loadPlanets: async () => {
                 try {
                     const response = await fetch("https://www.swapi.tech/api/planets/");
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     if (data.results) {
                         const transformedPlanets = data.results.map((item) => ({
@@ -55,6 +57,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             loadStarships: async () => {
                 try {
                     const response = await fetch("https://www.swapi.tech/api/starships/");
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     if (data.results) {
                         const transformedStarships = data.results.map((item) => ({
@@ -73,6 +76,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             loadCharacterDetail: async (id) => {
                 try {
                     const response = await fetch(`https://www.swapi.tech/api/people/${id}`);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     if (data.result) {
                         setStore({ characterDetail: data.result });
@@ -86,6 +90,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             loadPlanetDetail: async (id) => {
                 try {
                     const response = await fetch(`https://www.swapi.tech/api/planets/${id}`);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     if (data.result) {
                         setStore({ planetDetail: data.result });
@@ -99,6 +104,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             loadStarshipDetail: async (id) => {
                 try {
                     const response = await fetch(`https://www.swapi.tech/api/starships/${id}`);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     if (data.result) {
                         setStore({ starshipDetail: data.result });
@@ -111,18 +117,19 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Agregar a favoritos
             addFavorite: (item) => {
                 const store = getStore();
-                // Validar que el objeto tenga todas las propiedades necesarias
                 if (!item.uid || !item.name || !item.type) {
                     console.error("El favorito no tiene las propiedades necesarias:", item);
                     return;
                 }
-                const alreadyExists = store.favorites.some(fav => fav.uid === item.uid);
-                if (!alreadyExists) {
-                    const updatedFavorites = [...store.favorites, item];
-                    setStore({ favorites: updatedFavorites });
-                    localStorage.setItem("favorites", JSON.stringify(updatedFavorites)); // Guardar en localStorage
+                const alreadyExists = store.favorites.some((fav) => fav.uid === item.uid);
+                if (alreadyExists) {
+                    console.log(`El ítem "${item.name}" ya está en favoritos.`);
+                    return;
                 }
-            },
+                const updatedFavorites = [...store.favorites, item];
+                setStore({ favorites: updatedFavorites });
+                localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+            },            
 
             // Eliminar de favoritos
             removeFavorite: (uid) => {
