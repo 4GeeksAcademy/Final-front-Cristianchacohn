@@ -32,15 +32,35 @@ class Posts(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
     user_to = db.relationship('Users', backref=db.backref('posts', lazy='select'))
 
+    def __repr__(self):
+        return f'<Post: {self.id} - {self.title}>'
+
+    def serialize(self):
+        return {'id': self.id,
+                'title': self.title,
+                'description': self.description,
+                'body': self.body,
+                'date': self.date,
+                'image_url': self.image_url,
+                'user_id': self.user_id}
+
 
 class Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(), unique=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False) 
-
     user_to = db.relationship('Users', backref=db.backref('comments', lazy='select'))
     post_to = db.relationship('Posts', backref=db.backref('comments', lazy='select'))
+
+    def __repr__(self):
+        return f'<Comments: {self.id} - {self.title}>'
+
+    def serialize(self):
+        return {'id': self.id,
+                'body': self.body,
+                'user_id': self.user_id,
+                'post_id': self.post_id}
 
 
 class Medias(db.Model):
@@ -50,14 +70,29 @@ class Medias(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)  
     post_to = db.relationship('Posts', backref=db.backref('medias', lazy='select'))
 
+    def __repr__(self):
+        return f'<Medias: {self.id} - {self.title}>'
+
+    def serialize(self):
+        return {'id': self.id,
+                'media_type': self.media_type,
+                'post_id': self.post_id}
+
 
 class Followers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     following_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  
-
     following_to = db.relationship('Users', foreign_keys=[following_id], backref=db.backref('following', lazy='select'))
     follower_to = db.relationship('Users', foreign_keys=[follower_id], backref=db.backref('followers', lazy='select'))
+
+    def __repr__(self):
+        return f'<Followers: {self.id} - {self.title}>'
+
+    def serialize(self):
+        return {'id': self.id,
+                'following_id': self.following_id,
+                'follower_id': self.follower_id}
 
 
 class CharacterFavorites(db.Model):
