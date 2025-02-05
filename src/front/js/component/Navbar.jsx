@@ -6,6 +6,11 @@ export const Navbar = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
 
+    const handleLogout = () => {
+        actions.logoutUser();
+        navigate("/"); // Redirige a home después de cerrar sesión
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container">
@@ -35,23 +40,18 @@ export const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item">
-                            <Link className="nav-link" to="/characters">
-                                Characters
-                            </Link>
+                            <Link className="nav-link" to="/characters">Characters</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/planets">
-                                Planets
-                            </Link>
+                            <Link className="nav-link" to="/planets">Planets</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/starships">
-                                Starships
-                            </Link>
+                            <Link className="nav-link" to="/starships">Starships</Link>
                         </li>
                     </ul>
 
-                    <div className="dropdown">
+                    {/* FAVORITOS */}
+                    <div className="dropdown me-3">
                         <button
                             className="btn btn-warning dropdown-toggle"
                             type="button"
@@ -64,10 +64,7 @@ export const Navbar = () => {
                         <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="favoritesDropdown">
                             {store.favorites.length > 0 ? (
                                 store.favorites.map((item, index) => (
-                                    <li
-                                        key={index}
-                                        className="dropdown-item d-flex justify-content-between align-items-center"
-                                    >
+                                    <li key={index} className="dropdown-item d-flex justify-content-between align-items-center">
                                         <span
                                             onClick={() => navigate(`/${item.type}/${item.uid}`)}
                                             style={{ cursor: "pointer", color: "#000", textDecoration: "none" }}
@@ -87,6 +84,16 @@ export const Navbar = () => {
                             )}
                         </ul>
                     </div>
+
+                    {/* LOGIN / SIGNUP / LOGOUT */}
+                    {!store.token ? (
+                        <>
+                            <Link className="btn btn-outline-light me-2" to="/login">Login</Link>
+                            <Link className="btn btn-primary" to="/signup">Sign Up</Link>
+                        </>
+                    ) : (
+                        <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
+                    )}
                 </div>
             </div>
         </nav>

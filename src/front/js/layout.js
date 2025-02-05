@@ -13,6 +13,9 @@ import { Characters } from "./pages/Characters.jsx";
 import { CharacterDetail } from "./pages/CharacterDetail.jsx";
 import { PlanetDetail } from "./pages/PlanetDetail.jsx";
 
+import { Login } from "./pages/LogIn.jsx";
+import { Signup } from "./pages/SignUp.jsx";
+
 const Layout = () => {
     const basename = process.env.BASENAME || "";
 
@@ -22,8 +25,10 @@ const Layout = () => {
                 <Navbar />
                 <Routes>
                     <Route element={<Home />} path="/" />
+                    <Route element={<Login />} path="/login" />
+                    <Route element={<Signup />} path="/signup" />
                     <Route element={<Planets />} path="/planets" />
-                    <Route element={<PlanetDetail />} path="/planets/:id" />                    
+                    <Route element={<PlanetDetail />} path="/planets/:id" />
                     <Route element={<Starships />} path="/starships" />
                     <Route element={<StarshipsById />} path="/starships/:id" />
                     <Route element={<Characters />} path="/characters" />
