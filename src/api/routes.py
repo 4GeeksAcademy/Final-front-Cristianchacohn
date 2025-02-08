@@ -6,6 +6,10 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Posts, Comments, Medias, Followers, Characters, CharacterFavorites, Planets, PlanetFavorites
 import requests
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
@@ -18,6 +22,43 @@ def handle_hello():
     return jsonify(response_body), 200
 
 
+
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@api.route("/login", methods=["POST"])
+def login():
+    response_body = {}
+    data = request.json
+    email = data.get("email", None)
+    password = request.json.get("password", None)
+    row = db.session.execute(db.select(Users).where(Users.email == email, Users.password == password, Users.is_active==True)).scalar()
+    if not row:
+        response_body['message'] = 'User not found'
+        return response_body, 404
+    user = row.serialize()
+    claims = {'user_id': user['id'],
+              'is_active': user['is_active']}
+    print(claims)
+    access_token = create_access_token(identity=email, additional_claims=claims)
+    response_body['access_token'] = access_token
+    response_body['message'] = 'User logged'
+    response_body['results'] = user
+    return response_body, 200
+
+
+# Protect a route with jwt_required, which will kick out requests
+# without a valid JWT present.
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    response_body = {}
+    current_user = get_jwt_identity()  # El email
+    additional_claims = get_jwt()  # Los datos adionales
+    print(current_user)
+    print(additional_claims)
+    return response_body, 200
+
+
 @api.route('/users', methods=['GET'])
 def users():
     response_body = {}
@@ -27,6 +68,21 @@ def users():
         response_body['message'] = 'Usuarios'
         response_body['results'] = result
         return response_body, 200
+
+
+@api.route('/users/<int:id>', methods=['GET'])
+@jwt_required()
+def user_get(id):
+    response_body = {}
+    additional_claims = get_jwt()
+    print(id)
+    print('additional', additional_claims['user_id'])
+    if id != additional_claims['user_id']:
+        response_body['message'] = 'No tiene autorización para ver este perfil'
+        return response_body, 401
+    row = db.session.execute(db.select(Users).where(Users.id == id)).scalar()
+    response_body['results'] = row.serialize()
+    return response_body, 200
 
 
 @api.route('/followers', methods=['GET, POST'])
