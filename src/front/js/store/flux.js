@@ -8,6 +8,9 @@ const getState = ({ getStore, getActions, setStore }) => {
             planetDetail: null,
             starshipDetail: null,
             favorites: JSON.parse(localStorage.getItem("favorites")) || [], // Cargar favoritos de localStorage
+            isLogged: localStorage.getItem("token") ? true : false, // Verificar si hay token almacenado
+            user: null, // Usuario autenticado
+            alert: { text: "", background: "info", visible: false }, // Estado inicial de alertas
         },
         actions: {
             // Manejo de error de imágenes
@@ -32,7 +35,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 } catch (error) {
                     console.error("Error loading characters:", error);
                 }
-            },            
+            },
 
             // Cargar planetas
             loadPlanets: async () => {
@@ -129,7 +132,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 const updatedFavorites = [...store.favorites, item];
                 setStore({ favorites: updatedFavorites });
                 localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-            },            
+            },
 
             // Eliminar de favoritos
             removeFavorite: (uid) => {
@@ -137,6 +140,100 @@ const getState = ({ getStore, getActions, setStore }) => {
                 const filteredFavorites = store.favorites.filter(fav => fav.uid !== uid);
                 setStore({ favorites: filteredFavorites });
                 localStorage.setItem("favorites", JSON.stringify(filteredFavorites)); // Actualizar en localStorage
+            },
+
+            setAlert: (message, type) => {
+                setStore({ alert: { text: message, background: type, visible: true } });
+
+                // Ocultar alerta después de 3 segundos
+                setTimeout(() => {
+                    setStore({ alert: { text: "", background: "info", visible: false } });
+                }, 3000);
+            },
+
+            login: async (dataToSend) => {
+                const uri = `${process.env.BACKEND_URL}/api/login`;
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(dataToSend)
+                };
+
+                try {
+                    const response = await fetch(uri, options);
+                    if (!response.ok) {
+                        console.log('Error:', response.status, response.statusText);
+                        if (response.status === 401) {
+                            getActions().setAlert("Email o contraseña incorrectos", "danger");
+                        }
+                        return false; // Indicar error en el login
+                    }
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    setStore({
+                        isLogged: true,
+                        user: data.results
+                    });
+                    getActions().setAlert("Inicio de sesión exitoso", "success");
+                    return true;
+                } catch (error) {
+                    console.error("Error en login:", error);
+                    return false;
+                }
+            },
+
+            logout: () => {
+                localStorage.removeItem('token'); // Eliminar el token
+                setStore({
+                    isLogged: false,
+                    user: null
+                });
+            },
+            
+            getUser: async (userId) => {
+                const uri = `${process.env.BACKEND_URL}/api/users/${userId}`;
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                };
+
+                try {
+                    const response = await fetch(uri, options);
+                    if (!response.ok) {
+                        console.log('Error', response.status, response.statusText);
+                        return;
+                    }
+                    const data = await response.json();
+                    setStore({ user: data });
+                } catch (error) {
+                    console.error("Error en getUser:", error);
+                }
+            },
+
+            accessProtected: async () => {
+                const uri = `${process.env.BACKEND_URL}/api/protected`;
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                };
+
+                try {
+                    const response = await fetch(uri, options);
+                    if (!response.ok) {
+                        console.log('Error:', response.status, response.statusText);
+                        return;
+                    }
+                    const data = await response.json();
+                    getActions().setAlert(data.message, "success");
+                } catch (error) {
+                    console.error("Error en accessProtected:", error);
+                }
             },
         },
     };

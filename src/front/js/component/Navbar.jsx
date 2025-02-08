@@ -7,7 +7,7 @@ export const Navbar = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        actions.logoutUser();
+        actions.logout(); // Llamamos a la función logout en flux.js
         navigate("/"); // Redirige a home después de cerrar sesión
     };
 
@@ -86,7 +86,7 @@ export const Navbar = () => {
                     </div>
 
                     {/* LOGIN / SIGNUP / LOGOUT */}
-                    {!store.token ? (
+                    {!store.isLogged ? (
                         <>
                             <Link className="btn btn-outline-light me-2" to="/login">Login</Link>
                             <Link className="btn btn-primary" to="/signup">Sign Up</Link>
