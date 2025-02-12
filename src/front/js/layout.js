@@ -14,7 +14,7 @@ import { CharacterDetail } from "./pages/CharacterDetail.jsx";
 import { PlanetDetail } from "./pages/PlanetDetail.jsx";
 
 import { Login } from "./pages/LogIn.jsx";
-import { Signup } from "./pages/SignUp.jsx";
+import SignUp from "./pages/SignUp.jsx";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -26,7 +26,7 @@ const Layout = () => {
                 <Routes>
                     <Route element={<Home />} path="/" />
                     <Route element={<Login />} path="/login" />
-                    <Route element={<Signup />} path="/signup" />
+                    <Route element={<SignUp />} path="/signup" />
                     <Route element={<Planets />} path="/planets" />
                     <Route element={<PlanetDetail />} path="/planets/:id" />
                     <Route element={<Starships />} path="/starships" />
