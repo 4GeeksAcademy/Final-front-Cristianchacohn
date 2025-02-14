@@ -24,19 +24,44 @@ def handle_hello():
 
 @api.route("/signup", methods=["POST"])
 def signup():
+    response_body = {}
     data = request.json
-    if not data.get("email") or not data.get("password"):
-        return jsonify({"error": "Email y contraseña requeridos"}), 400
-    
-    existing_user = Users.query.filter_by(email=data["email"]).first()
-    if existing_user:
-        return jsonify({"error": "El usuario ya existe"}), 400
-    
-    new_user = Users(email=data["email"], password=data["password"], name=data.get("name", ""))
-    db.session.add(new_user)
+    email = data.get("email")
+    first_name = data.get("first_name")
+    password = data.get("password")
+
+    if not email or not password:
+        response_body["message"] = "Email or password are required"
+        return response_body, 400
+
+    user_register = db.session.execute(db.select(Users).where(Users.email == email)).scalar()
+    if user_register:
+        response_body["message"] = "User already exists"
+        return response_body, 400
+
+    row = Users(
+        email=data.get("email"),
+        password=data.get("password"),
+        first_name=data.get("first_name"),
+        is_active=True
+    )
+
+    db.session.add(row)
     db.session.commit()
+    user = row.serialize()
     
-    return jsonify({"message": "Usuario creado correctamente"}), 201
+    claims = {
+        "user_id": user["id"],
+        "is_active": user["is_active"]
+    }
+    
+    access_token = create_access_token(identity=email, additional_claims=claims)
+    response_body["access_token"] = access_token
+    response_body["message"] = "User registered"
+    response_body["results"] = user
+    
+    return response_body, 201
+
 
 # Ruta para obtener los datos del usuario autenticado
 @api.route('/user', methods=['GET'])

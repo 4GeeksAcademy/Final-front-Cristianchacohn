@@ -15,8 +15,29 @@ const getState = ({ getStore, getActions, setStore }) => {
         actions: {
             handleErrorImg: (event) => {
                 event.target.src = 'https://starwars-visualguide.com/assets/img/placeholder.jpg';
+                
             },
-
+            signup: async (userData) => {
+                const uri = `${process.env.BACKEND_URL}/api/signup`;
+                try {
+                    const response = await fetch(uri, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(userData),
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        getActions().setAlert(data.message || "Error en el registro", "danger");
+                        return false;
+                    }
+                    getActions().setAlert("Usuario creado con éxito. Inicie sesión.", "success");
+                    return true;
+                } catch (error) {
+                    console.error("Error en la solicitud de registro:", error);
+                    getActions().setAlert("Error en el servidor.");
+                    return false;
+                }
+            },        
             loadCharacters: async () => {
                 try {
                     const response = await fetch("https://www.swapi.tech/api/people/");
@@ -178,29 +199,24 @@ const getState = ({ getStore, getActions, setStore }) => {
         },
 
         signup: async (userData) => {
-            const uri = `${process.env.BACKEND_URL}/api/signup`;
-            
-            try {
-                const response = await fetch(uri, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(userData),
-                });
-        
-                const data = await response.json(); // Convertir respuesta a JSON
-        
-                if (!response.ok) {
-                    console.error("Error en signup:", data);
-                    getActions().setAlert(data.message || "Error en el registro", "danger");
-                    return false;
-                }
-        
-                getActions().setAlert("Usuario creado con éxito. Inicie sesión.", "success");
-                return true;
-            } catch (error) {
-                console.error("Error en la solicitud de registro:", error);
-                getActions().setAlert("Error en el servidor.");
-                return false;
+    const uri = `${process.env.BACKEND_URL}/api/signup`;
+    try {
+        const response = await fetch(uri, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            getActions().setAlert(data.message || "Error en el registro", "danger");
+            return false;
+        }
+        getActions().setAlert("Usuario creado con éxito. Inicie sesión.", "success");
+        return true;
+    } catch (error) {
+        console.error("Error en la solicitud de registro:", error);
+        getActions().setAlert("Error en el servidor.");
+        return false;
             }
         }
         
